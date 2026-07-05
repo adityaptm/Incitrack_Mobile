@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../main_screen.dart';
 import 'register_screen.dart';
+// Import ApiService ditambahkan di sini
+import '../../services/api_service.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -67,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Logo (Placeholder if image not yet in assets)
+                        // Logo
                         const Icon(
                           Icons.location_on,
                           size: 65,
@@ -122,14 +124,54 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 30),
                         
+                        // BAGIAN TOMBOL ELEVATED BUTTON YANG SUDAH TERINTEGRASI API LARAVEL:
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              // Simulate successful login
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (_) => const MainScreen()),
+                            onPressed: () async {
+                              String email = _emailController.text.trim();
+                              String password = _passwordController.text.trim();
+
+                              if (email.isEmpty || password.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Email dan Password wajib diisi!')),
+                                );
+                                return;
+                              }
+
+                              // Tampilkan loading dialog spinner
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => const Center(child: CircularProgressIndicator()),
                               );
+
+                              // Panggil fungsi login dari ApiService
+                              final result = await ApiService.login(email, password);
+
+                              // Tutup loading dialog spinner
+                              if (context.mounted) Navigator.pop(context);
+
+                              if (result['success'] == true) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Selamat Datang, ${result['data']['nama']}!')),
+                                  );
+
+                                  // Pindah ke MainScreen utama
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const MainScreen()), 
+                                  );
+                                }
+                              } else {
+                                // Gagal Login
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(result['message'] ?? 'Login Gagal!')),
+                                  );
+                                }
+                              }
                             },
                             child: const Text('Masuk Sekarang'),
                           ),
