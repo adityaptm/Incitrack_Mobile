@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Proyek Incitrack Mobile (Bahan Ajar)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E74C3C;
+            --secondary: #2C3E50;
+            --background: #FFFFFF;
+            --surface: #F8F9FA;
+            --text: #2D3748;
+            --text-light: #718096;
+            --border: #E2E8F0;
+            --code-bg: #1A1A24;
+            --code-text: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            background-color: var(--background);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .alert-info {
+            background-color: #EBF8FF;
+            border-left: 4px solid #3182CE;
+            color: #2B6CB0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--secondary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D3748;
+            margin-top: 30px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #4A5568;
+        }
+
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-left: 24px;
+            color: #4A5568;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--surface);
+            color: #E53E3E;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            border: 1px solid #2D3748;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: inherit;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--surface);
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        /* Styling for print/PDF generation */
+        @media print {
+            body {
+                padding: 0;
+                font-size: 12pt;
+                color: #000;
+            }
+            .alert-info {
+                display: none; /* Hide instructions in the printed PDF */
+            }
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            pre, blockquote, table, tr, img {
+                page-break-inside: avoid;
+            }
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Petunjuk Cetak PDF -->
+    <div class="alert-info">
+        <strong>💡 Petunjuk Cetak PDF:</strong> Untuk menyimpan dokumen ini sebagai file PDF berkualitas tinggi, tekan tombol <strong>Ctrl + P</strong> (Windows) atau <strong>Cmd + P</strong> (Mac), pilih opsi tujuan/printer ke <strong>"Save as PDF"</strong> / <strong>"Simpan sebagai PDF"</strong>, lalu klik tombol Simpan.
+    </div>
+
+    <h1>Dokumentasi Lengkap Proyek Incitrack Mobile</h1>
+    <div class="subtitle">Panduan Kode, Arsitektur Sistem, dan Integrasi REST API (Bahan Ajar Pemrograman)</div>
+
+    <h2>1. Pendahuluan &amp; Arsitektur Sistem</h2>
+    <p>Aplikasi <strong>Incitrack Mobile</strong> dirancang menggunakan pola arsitektur modern <strong>MVVM (Model-View-ViewModel)</strong>. Arsitektur ini memisahkan logika antarmuka (View), manajemen state (Provider/ViewModel), dan akses jaringan/data (Services &amp; Models). Pola ini sangat disukai di industri karena membuat kode menjadi modular, mudah dibaca, serta ramah untuk pengujian kode (unit testing).</p>
+    
+    <p>Alur data di dalam sistem bekerja secara reaktif sebagai berikut:</p>
+    <ul>
+        <li><strong>View (UI):</strong> Berupa Widget Flutter yang mengamati perubahan state dari <em>Provider</em> secara langsung.</li>
+        <li><strong>Provider (State Management):</strong> Mengambil data dari <em>Service</em>, memproses data mentah, dan memicu perubahan tampilan UI menggunakan metode <code>notifyListeners()</code>.</li>
+        <li><strong>Service (Network API):</strong> Berinteraksi langsung dengan backend server menggunakan pustaka <code>http</code> untuk pengiriman data JSON maupun berkas multipart.</li>
+        <li><strong>Model:</strong> Memetakan format respon JSON dari REST API Laravel ke dalam objek kelas Dart secara aman.</li>
+    </ul>
+
+    <h2>2. Struktur Direktori Proyek</h2>
+    <p>Struktur folder di dalam direktori <code>lib/</code> disusun secara modular untuk mendukung pembelajaran tingkat lanjut:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Direktori / File</th>
+                <th>Fungsi Utama</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>lib/core/theme/</code></td>
+                <td>Penyimpanan palet warna global (AppColors) dan desain gaya Material 3 (AppTheme).</td>
+            </tr>
+            <tr>
+                <td><code>lib/models/</code></td>
+                <td>Kelas pemetaan objek data yang dikirim dan diterima dari database (User, Jalan, Laporan).</td>
+            </tr>
+            <tr>
+                <td><code>lib/providers/</code></td>
+                <td>Logika state management reaktif (mengontrol proses auth, daftar jalan, dan kirim laporan).</td>
+            </tr>
+            <tr>
+                <td><code>lib/services/</code></td>
+                <td>Rangkaian helper untuk melakukan koneksi API dan manajemen penyimpanan token enkripsi lokal.</td>
+            </tr>
+            <tr>
+                <td><code>lib/screens/</code></td>
+                <td>Seluruh rancangan antarmuka pengguna (Login, Register, Home Map, Form Lapor, Riwayat).</td>
+            </tr>
+            <tr>
+                <td><code>lib/main.dart</code></td>
+                <td>Inisialisasi MultiProvider global dan pemeriksaan token login saat aplikasi pertama kali dimuat.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Analisis Dependensi (pubspec.yaml)</h2>
+    <p>Dependensi yang dipasang di dalam proyek ini memiliki peran krusial masing-masing:</p>
+    <ul>
+        <li><code>provider</code>: Sebagai jembatan state management untuk mengirimkan data secara horizontal antar layar.</li>
+        <li><code>flutter_secure_storage</code>: Menyimpan token otentikasi Sanctum secara aman di ruang penyimpanan terenkripsi OS.</li>
+        <li><code>geolocator</code>: Mengambil data posisi satelit GPS terkini dari sensor internal perangkat secara presisi.</li>
+        <li><code>flutter_map</code> &amp; <code>latlong2</code>: Peta gratis OpenStreetMap (OSM) tanpa kunci API komersial seperti Google Maps.</li>
+        <li><code>image_picker</code>: Mengakses fitur kamera perangkat atau galeri untuk mengunggah bukti fisik.</li>
+    </ul>
+
+    <h2>4. Penjelasan Mendalam Kode Sumber</h2>
+
+    <h3>A. Model Laporan (lib/models/laporan_model.dart)</h3>
+    <p>Model ini mengonversi format respons JSON dari Laravel ke dalam kelas objek Dart secara aman dengan proteksi tipe data numerik (koordinat lintang/bujur):</p>
+    <pre><code>// lib/models/laporan_model.dart
+class LaporanModel {
+  final int id;
+  final int userId;
+  final int jalanId;
+  final String jenis;
+  final String lokasi;
+  final double latitude;
+  final double longitude;
+  final String? penyebab;
+  final String? dampak;
+  final String? foto;
+  final String? video;
+  final String status;
+  final String createdAt;
+
+  LaporanModel({
+    required this.id,
+    required this.userId,
+    required this.jalanId,
+    required this.jenis,
+    required this.lokasi,
+    required this.latitude,
+    required this.longitude,
+    this.penyebab,
+    this.dampak,
+    this.foto,
+    this.video,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory LaporanModel.fromJson(Map&lt;String, dynamic&gt; json) {
+    // Menghindari crash konversi double jika API mengembalikan string
+    double parseCoordinate(dynamic val) {
+      if (val == null) return 0.0;
+      if (val is num) return val.toDouble();
+      return double.tryParse(val.toString()) ?? 0.0;
+    }
+
+    return LaporanModel(
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      jalanId: json['jalan_id'] ?? 0,
+      jenis: json['jenis_kecelakaan'] ?? json['jenis'] ?? '',
+      lokasi: json['lokasi'] ?? '',
+      latitude: parseCoordinate(json['latitude'] ?? json['lat']),
+      longitude: parseCoordinate(json['longitude'] ?? json['lng']),
+      penyebab: json['penyebab'],
+      dampak: json['dampak'],
+      foto: json['foto_bukti'] ?? json['foto'],
+      video: json['video_bukti'] ?? json['video'],
+      status: json['status'] ?? 'pending',
+      createdAt: json['created_at'] ?? '',
+    );
+  }
+}</code></pre>
+
+    <h3>B. Integrasi Pengiriman Media Lintas Platform (lib/services/api_service.dart)</h3>
+    <p>Bagian ini menunjukkan bagaimana Flutter menangani upload berkas media (foto/video) secara multipart baik saat berjalan di Platform Web (menggunakan memori bytes) maupun Mobile (menggunakan alamat path berkas lokal):</p>
+    <pre><code>// lib/services/api_service.dart
+static Future&lt;Map&lt;String, dynamic&gt;&gt; kirimLaporan(
+  Map&lt;String, String&gt; fields,
+  XFile? fotoFile,
+  XFile? videoFile,
+) async {
+  final uri = Uri.parse('${baseUrl}laporan');
+  final request = http.MultipartRequest('POST', uri);
+  
+  final headers = await _getHeaders();
+  request.headers.addAll(headers);
+  request.headers.remove('Content-Type'); // Biarkan HttpClient membuat pembatas secara otomatis
+
+  request.fields.addAll(fields);
+
+  // Unggah Foto Bukti
+  if (fotoFile != null) {
+    if (kIsWeb) {
+      // Jika berjalan di browser (Flutter Web)
+      final bytes = await fotoFile.readAsBytes();
+      request.files.add(http.MultipartFile.fromBytes(
+        'foto',
+        bytes,
+        filename: fotoFile.name,
+      ));
+    } else {
+      // Jika berjalan di Android/iOS (Native Mobile)
+      request.files.add(await http.MultipartFile.fromPath(
+        'foto',
+        fotoFile.path,
+      ));
+    }
+  }
+  
+  final streamedResponse = await request.send();
+  final response = await http.Response.fromStream(streamedResponse);
+  return jsonDecode(response.body);
+}</code></pre>
+
+    <h3>C. Logika Otomatis Tanggal &amp; Waktu di Provider (lib/providers/laporan_provider.dart)</h3>
+    <p>Agar proses input pengguna minimalis, field tanggal dan waktu secara otomatis dibuat oleh sistem frontend sesaat sebelum payload dikirimkan ke server backend:</p>
+    <pre><code>// lib/providers/laporan_provider.dart
+Future&lt;bool&gt; kirimLaporan({
+  required int jalanId,
+  required String jenisKecelakaan,
+  required String lokasi,
+  required double latitude,
+  required double longitude,
+  String? penyebab,
+  String? dampak,
+  XFile? fotoFile,
+  XFile? videoFile,
+}) async {
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    final now = DateTime.now();
+    final Map&lt;String, String&gt; fields = {
+      'jalan_id': jalanId.toString(),
+      'jenis': jenisKecelakaan,
+      'lokasi': lokasi,
+      'lat': latitude.toString(),
+      'lng': longitude.toString(),
+      // Mengirimkan format tanggal YYYY-MM-DD dan waktu HH:mm yang divalidasi server Laravel
+      'tanggal': '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}',
+      'waktu': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+    };
+
+    if (penyebab != null && penyebab.isNotEmpty) fields['penyebab'] = penyebab;
+    if (dampak != null && dampak.isNotEmpty) fields['dampak'] = dampak;
+
+    final response = await ApiService.kirimLaporan(fields, fotoFile, videoFile);
+    return response['success'] == true;
+  } catch (e) {
+    _errorMessage = e.toString();
+    return false;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}</code></pre>
+
+    <h2>5. Hubungan Integrasi REST API Laravel</h2>
+    <p>Backend Laravel mendengarkan permintaan API dari Flutter pada rute <code>POST /api/laporan</code>. Pengontrol backend (<code>LaporanApiController.php</code>) memiliki aturan validasi ketat dan penanganan penyimpanan berkas:</p>
+    <ol>
+        <li><strong>Validasi Parameter:</strong> Menolak permintaan jika data esensial (seperti <code>jalan_id</code>, <code>tanggal</code>, <code>waktu</code>, <code>jenis</code>, atau koordinat <code>lat</code> / <code>lng</code>) tidak terkirim.</li>
+        <li><strong>Proses Penanganan Media:</strong> Berkas gambar/video yang diunggah akan disaring, diganti namanya menggunakan timestamp acak agar tidak bentrok, dan disimpan di direktori <code>public/uploads/</code> agar dapat diakses publik.</li>
+        <li><strong>Status Otomatis:</strong> Setiap laporan yang baru saja dikirim oleh pengguna akan disimpan dengan status awal <code>'pending'</code> sebelum diverifikasi oleh admin web.</li>
+    </ol>
+
+    <h2>6. Panduan Menjalankan Sistem Lokal</h2>
+    <h3>A. Pengaturan Server &amp; Database (MAMP)</h3>
+    <ul>
+        <li>Nyalakan server database MySQL di port <strong>8111</strong> (bawaan MAMP).</li>
+        <li>Sesuaikan informasi database pada file <code>.env</code> di Laravel.</li>
+        <li>Jalankan migrasi dan seeding data awal jalan tol menggunakan perintah:
+            <pre><code>php artisan migrate --seed</code></pre>
+        </li>
+        <li>Nyalakan server API Laravel:
+            <pre><code>php artisan serve</code></pre>
+        </li>
+    </ul>
+
+    <h3>B. Pengaturan Aplikasi Flutter</h3>
+    <ul>
+        <li>Unduh dependensi proyek:
+            <pre><code>flutter pub get</code></pre>
+        </li>
+        <li>Jalankan aplikasi di platform browser web:
+            <pre><code>flutter run -d chrome</code></pre>
+        </li>
+        <li>Gunakan akun tes default yang sudah disiapkan di seeder database:
+            <ul>
+                <li><strong>Email:</strong> <code>test@example.com</code></li>
+                <li><strong>Password:</strong> <code>password123</code></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
