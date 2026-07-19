@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 import '../main_screen.dart';
-import 'register_screen.dart';
-// Import ApiService ditambahkan di sini
-import '../../services/api_service.dart'; 
+import 'register_screen.dart'; 
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -55,12 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     constraints: const BoxConstraints(maxWidth: 440),
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
+                          color: Colors.black.withValues(alpha: 0.25),
                           blurRadius: 40,
                           offset: const Offset(0, 20),
                         ),
@@ -128,52 +129,51 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              String email = _emailController.text.trim();
-                              String password = _passwordController.text.trim();
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () async {
+                                    String email = _emailController.text.trim();
+                                    String password = _passwordController.text.trim();
 
-                              if (email.isEmpty || password.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Email dan Password wajib diisi!')),
-                                );
-                                return;
-                              }
+                                    if (email.isEmpty || password.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Email dan Password wajib diisi!')),
+                                      );
+                                      return;
+                                    }
 
-                              // Tampilkan loading dialog spinner
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => const Center(child: CircularProgressIndicator()),
-                              );
+                                    // Panggil fungsi login dari AuthProvider
+                                    final success = await authProvider.login(email, password);
 
-                              // Panggil fungsi login dari ApiService
-                              final result = await ApiService.login(email, password);
+                                    if (success) {
+                                      if (context.mounted) {
+                                        final name = authProvider.currentUser?.name ?? '';
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Selamat Datang, $name!')),
+                                        );
 
-                              // Tutup loading dialog spinner
-                              if (context.mounted) Navigator.pop(context);
-
-                              if (result['success'] == true) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Selamat Datang, ${result['data']['nama']}!')),
-                                  );
-
-                                  // Pindah ke MainScreen utama
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const MainScreen()), 
-                                  );
-                                }
-                              } else {
-                                // Gagal Login
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(result['message'] ?? 'Login Gagal!')),
-                                  );
-                                }
-                              }
-                            },
-                            child: const Text('Masuk Sekarang'),
+                                        // Pindah ke MainScreen utama
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const MainScreen()), 
+                                        );
+                                      }
+                                    } else {
+                                      // Gagal Login
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(authProvider.errorMessage ?? 'Login Gagal!')),
+                                        );
+                                      }
+                                    }
+                                  },
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : const Text('Masuk Sekarang'),
                           ),
                         ),
                         const SizedBox(height: 30),

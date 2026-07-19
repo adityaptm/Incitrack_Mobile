@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -26,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -53,12 +56,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     constraints: const BoxConstraints(maxWidth: 440),
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
+                          color: Colors.black.withValues(alpha: 0.25),
                           blurRadius: 40,
                           offset: const Offset(0, 20),
                         ),
@@ -122,8 +125,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {},
-                            child: const Text('Daftar Sekarang'),
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () async {
+                                    String name = _nameController.text.trim();
+                                    String email = _emailController.text.trim();
+                                    String password = _passwordController.text.trim();
+                                    String confirmPassword = _confirmPasswordController.text.trim();
+
+                                    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Semua field wajib diisi!')),
+                                      );
+                                      return;
+                                    }
+
+                                    if (password != confirmPassword) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Konfirmasi password tidak cocok!')),
+                                      );
+                                      return;
+                                    }
+
+                                    final success = await authProvider.register(name, email, password);
+
+                                    if (success) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Pendaftaran berhasil! Silakan masuk.')),
+                                        );
+                                        Navigator.pop(context); // Kembali ke Login
+                                      }
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(authProvider.errorMessage ?? 'Pendaftaran Gagal!')),
+                                        );
+                                      }
+                                    }
+                                  },
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : const Text('Daftar Sekarang'),
                           ),
                         ),
                         const SizedBox(height: 30),

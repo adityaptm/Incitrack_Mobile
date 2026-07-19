@@ -23,7 +23,7 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        background: AppColors.background,
+        surface: AppColors.background,
         error: AppColors.danger,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -39,12 +39,12 @@ class AppTheme {
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
           elevation: 6,
-          shadowColor: AppColors.primary.withOpacity(0.5),
+          shadowColor: AppColors.primary.withValues(alpha: 0.5),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFFF8FAFC).withOpacity(0.8),
+        fillColor: const Color(0xFFF8FAFC).withValues(alpha: 0.8),
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
